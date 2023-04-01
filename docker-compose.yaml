@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  web:
+    image: tomcat:9.0-jdk11
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./webapp:/usr/local/tomcat/webapps/
+      - ./mysql-connector-java-8.0.26.jar:/usr/local/tomcat/lib/mysql-connector-java-8.0.26.jar
+      - ./context.xml:/usr/local/tomcat/conf/context.xml
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sakila
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: root
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: myuser
+      PMA_PASSWORD: mypassword
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
